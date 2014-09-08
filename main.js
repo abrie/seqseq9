@@ -29,11 +29,6 @@ function getLoStatus(message) {
 }
 
 
-function R() {
-    return Math.floor(Math.random()*3);
-}
-
-var r = R(); 
 function onNoteOn(channel, note, velocity) {
     if( channel === 0 ) {
         noteOn(0, note, 127);
