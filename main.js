@@ -111,10 +111,10 @@ input.on('message', function(deltaTime, message) {
                 break; 
                 case START:
                     console.log("<clock START>");
+                    pulses = 0;
                 break;
                 case STOP:
                     console.log("<clock STOP>");
-                    pulses = 0;
                 break;
                 case CONTINUE:
                     console.log("<clock CONTINUE>");
