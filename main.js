@@ -125,7 +125,7 @@ input.on('message', function(deltaTime, message) {
     }
 });
 
-function generateBjorklund( steps, pulses, noRotate ) {
+function generateBjorklund( steps, pulses, pulseFirst ) {
     var divisor = steps - pulses;
     var level = 0;
 
@@ -178,13 +178,12 @@ function generateBjorklund( steps, pulses, noRotate ) {
 
     build( level );
 
-    if(noRotate) {
-        return pattern;
-    }
-    else { //rotate so first element is a pulse
+    if(pulseFirst) {
         var first = pattern.indexOf( 1 );
         var slice = pattern.slice(0, first);
         pattern.splice(0,first);
-        return pattern.concat(slice);
+        pattern = pattern.concat(slice);
     }
+
+    return pattern;
 }
