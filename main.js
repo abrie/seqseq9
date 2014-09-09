@@ -3,9 +3,11 @@ var input = new midi.input();
 var output = new midi.output();
 var INPUT = 0;
 var OUTPUT = 1;
+
 console.log("\n*synth IX* manandjazz");
 console.log("Input port:", input.getPortName(INPUT));
 console.log("Output port:", output.getPortName(OUTPUT));
+
 output.openPort(OUTPUT);
 input.openPort(INPUT);
 input.ignoreTypes(true,false,true);
@@ -28,7 +30,6 @@ function getLoStatus(message) {
     return message[0] & 0x0F;
 }
 
-
 function onNoteOn(channel, note, velocity) {
     if( channel === 0 ) {
         noteOn(0, note, 127);
@@ -46,15 +47,19 @@ function rand(v) {
     return Math.floor( Math.random()*v );
 }
 
-var set = [rand(4)*PPQN,rand(7)*PPQN,rand(10)*PPQN];
-var setIndex = 0;
-function noteOn(channel, note, velocity) {
-    var offset = set[setIndex++ % set.length];
-    addMessage(offset, [NOTE_ON + channel, note, velocity]);
-    addMessage(offset+PPQN/4, [NOTE_ON + channel, note+12, velocity]);
+var channels = [
+    generateBjorklund(8,3,true),
+    generateBjorklund(13,4),
+    generateBjorklund(24,21,true)
+];
 
-    addMessage(offset+PPQN, [NOTE_OFF + channel, note, velocity]);
-    addMessage(offset+PPQN/4+PPQN/2, [NOTE_OFF + channel, note+12, velocity]);
+function noteOn(channel, note, velocity) {
+    channels[channel].forEach( function(isPulse, index) {
+        if( isPulse ) {
+            addMessage(index*PPQN/2, [NOTE_ON + channel, note, velocity]);
+            addMessage((index+2)*PPQN/2, [NOTE_OFF + channel, note, velocity]);
+        }
+    });
 }
 
 var eventQueue = [];
@@ -119,3 +124,67 @@ input.on('message', function(deltaTime, message) {
 
     }
 });
+
+function generateBjorklund( steps, pulses, noRotate ) {
+    var divisor = steps - pulses;
+    var level = 0;
+
+    if( pulses === 0) {
+        var result = [];
+        for( var index = 0; index < steps; index++ ) {
+            result.push(0);
+        }
+        return result;
+    }
+
+    var pattern = [];
+    var counts = [];
+    var remainders = [];
+
+    remainders.push( pulses );
+
+    while( true ) {
+        var count = Math.floor( divisor / remainders[level] );
+        counts.push( count );
+        var remainder = divisor % remainders[level];
+        remainders.push( remainder );
+        divisor = remainders[level];
+        level = level + 1;
+        if( remainders[level] <= 1 ) {
+            break;
+        }
+    }
+
+    counts.push(divisor);
+
+    function build( l ) {
+        if( l === -1 ) {
+            pattern.push( 0 );
+            return;
+        }
+        if( l === -2 ) {
+            pattern.push( 1 );
+            return;
+        }
+
+        for( var i = 0; i < counts[l]; i++ ) {
+            build( l - 1 );
+        }
+
+        if( remainders[l] !== 0 ) {
+            build( l - 2 );
+        }
+    }
+
+    build( level );
+
+    if(noRotate) {
+        return pattern;
+    }
+    else { //rotate so first element is a pulse
+        var first = pattern.indexOf( 1 );
+        var slice = pattern.slice(0, first);
+        pattern.splice(0,first);
+        return pattern.concat(slice);
+    }
+}
