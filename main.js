@@ -47,19 +47,33 @@ function rand(v) {
     return Math.floor( Math.random()*v );
 }
 
-var channels = [
-    generateBjorklund(8,3,true),
-    generateBjorklund(13,4),
-    generateBjorklund(24,21,true)
-];
+var instreams = {
+    0:[
+        generateBjorklund(5,1),
+        generateBjorklund(13,3),
+        generateBjorklund(4,1)
+    ]
+};
 
-function noteOn(channel, note, velocity) {
-    channels[channel].forEach( function(isPulse, index) {
-        if( isPulse ) {
-            addMessage(index*PPQN/2, [NOTE_ON + channel, note, velocity]);
-            addMessage((index+2)*PPQN/2, [NOTE_OFF + channel, note, velocity]);
-        }
+var shifts = [0,5,7,-5,10];
+function processInstream(instream, note, velocity) {
+    var shift = shifts[rand(shifts.length)];
+    var shift2 = shifts[rand(shifts.length)];
+    instream.forEach( function(pattern, channel) {
+        pattern.forEach( function(isPulse, step) {
+            if( isPulse ) {
+                addMessage(step*PPQN, [NOTE_ON + channel, note+shift, velocity]);
+                addMessage((step+2)*PPQN, [NOTE_OFF + channel, note+shift, velocity]);
+            }
+        });
     });
+}
+
+function noteOn(dataChannel, note, velocity) {
+    instream = instreams[dataChannel];
+    if( instream ) {
+        processInstream(instream, note, velocity);
+    }
 }
 
 var eventQueue = [];
