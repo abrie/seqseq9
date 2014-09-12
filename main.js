@@ -45,18 +45,23 @@ function rand(v) {
 
 function Emitter(patterns) {
     var shifts = [0,3,7];
-    var stepSize = PPQN / 3;
-    function on(channel, note, velocity) {
-        var instream = patterns[channel];
+    function emit(desc, note, velocity) {
         var shift = shifts[rand(shifts.length)];
-        instream.forEach( function(stream, channel) {
-            stream.pattern.forEach( function(isPulse, step) {
-                if( isPulse ) {
-                    messageQueue.enqueue(step*stream.stepSize, [NOTE_ON + channel, note+shift, velocity]);
-                    messageQueue.enqueue((step+2)*stream.stepSize, [NOTE_OFF + channel, note+shift, velocity]);
-                }
-            });
+        desc.pattern.forEach( function(isPulse, step) {
+            if( isPulse ) {
+                var onMessage = [NOTE_ON + desc.channel, note+shift, velocity];
+                messageQueue.enqueue(step*desc.stepSize, onMessage );
+                var offMessage = [NOTE_OFF + desc.channel, note+shift, velocity];
+                messageQueue.enqueue((step+2)*desc.stepSize, offMessage );
+            }
         });
+    }
+
+    function on(channel, note, velocity) {
+        var streams = patterns[channel];
+        streams.forEach( function(stream) { 
+            emit(stream, note, velocity); 
+        }); 
     }
 
     return {
@@ -66,9 +71,9 @@ function Emitter(patterns) {
 
 var emitterA = new Emitter({
     0:[
-        { pattern: generateBjorklund(8, 5, true), stepSize: PPQN/2 },
-        { pattern: generateBjorklund(13,3), stepSize: PPQN/8 },
-        { pattern: generateBjorklund(7,5), stepSize: PPQN },
+        { channel: 0, pattern: generateBjorklund(8, 5, true), stepSize: PPQN/2 },
+        { channel: 1, pattern: generateBjorklund(13,3), stepSize: PPQN/8 },
+        { channel: 2, pattern: generateBjorklund(7,5), stepSize: PPQN },
     ]
 });
 
