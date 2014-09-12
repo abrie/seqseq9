@@ -1,6 +1,9 @@
 SeqSeq9
 =======
 
+### The Sound
+[Here is an mp3](https://github.com/abrie/seqseq9/blob/master/samples.mp3?raw=true) of recent output. No postproduction. All sounds are Logic X instruments and generally use a factory patch.
+
 ### History
 This is the ninth generation of a sequencer-sequencer. Described as an experiment in computer aided jazz. It was supposed to yield fame and fortune. But all it made were tones.
 
