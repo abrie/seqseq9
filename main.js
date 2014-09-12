@@ -15,6 +15,7 @@ input.ignoreTypes(true,false,true);
 NOTE_ON = 0x90;
 NOTE_OFF = 0x80;
 SYSTEM = 0xF0;
+SPP = 0x02;
 CLOCK = 0x08;
 START = 0x0A;
 CONTINUE = 0x0B;
@@ -44,10 +45,10 @@ function rand(v) {
 }
 
 function Emitter(patterns) {
-    var shifts = [0,3,7];
+    var shifts = [0,3,7,1];
     function emit(desc, note, velocity) {
-        var shift = shifts[rand(shifts.length)];
         desc.pattern.forEach( function(isPulse, step) {
+        var shift = shifts[rand(shifts.length)];
             if( isPulse ) {
                 var onMessage = [NOTE_ON + desc.channel, note+shift, velocity];
                 messageQueue.enqueue(step*desc.stepSize, onMessage );
@@ -71,9 +72,10 @@ function Emitter(patterns) {
 
 var emitterA = new Emitter({
     0:[
-        { channel: 0, pattern: generateBjorklund(8, 5, true), stepSize: PPQN/2 },
-        { channel: 1, pattern: generateBjorklund(13,3), stepSize: PPQN/8 },
-        { channel: 2, pattern: generateBjorklund(7,5), stepSize: PPQN },
+        { channel: 0, pattern: generateBjorklund(8, 4 ), stepSize: PPQN/2 },
+        { channel: 0, pattern: generateBjorklund(7, 5, true), stepSize: PPQN/2 },
+        { channel: 1, pattern: generateBjorklund(13,3), stepSize: PPQN/6 },
+        { channel: 1, pattern: generateBjorklund(7,5), stepSize: PPQN },
     ]
 });
 
@@ -146,7 +148,16 @@ input.on('message', function(deltaTime, message) {
                 case CONTINUE:
                     console.log("<clock CONTINUE>");
                 break;
+                case SPP:
+                    console.log("<pointer>", message[1], message[2]);
+                break;
+                default:
+                    console.log("unknown system:", message);
+                break;
             }
+        break;
+        default:
+            console.log("unknown status:", message);
         break;
 
     }
