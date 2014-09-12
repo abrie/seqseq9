@@ -31,11 +31,7 @@ function getLoStatus(message) {
 }
 
 function onNoteOn(channel, note, velocity) {
-    if( channel === 0 ) {
-        noteOn(0, note, 127);
-        noteOn(1, note, 127);
-        noteOn(2, note, 127);
-    }
+    emitterA.on(channel, note, velocity);
 }
 
 function onNoteOff(channel, note, velocity) {
@@ -47,34 +43,34 @@ function rand(v) {
     return Math.floor( Math.random()*v );
 }
 
-var instreams = {
-    0:[
-        generateBjorklund(5,1),
-        generateBjorklund(13,3),
-        generateBjorklund(4,1)
-    ]
-};
-
-var shifts = [0,5,7,-5,10];
-function processInstream(instream, note, velocity) {
-    var shift = shifts[rand(shifts.length)];
-    var shift2 = shifts[rand(shifts.length)];
-    instream.forEach( function(pattern, channel) {
-        pattern.forEach( function(isPulse, step) {
-            if( isPulse ) {
-                addMessage(step*PPQN, [NOTE_ON + channel, note+shift, velocity]);
-                addMessage((step+2)*PPQN, [NOTE_OFF + channel, note+shift, velocity]);
-            }
+function Emitter(patterns) {
+    var shifts = [0,3,7];
+    var stepSize = PPQN / 3;
+    function on(channel, note, velocity) {
+        var instream = patterns[channel];
+        var shift = shifts[rand(shifts.length)];
+        instream.forEach( function(stream, channel) {
+            stream.pattern.forEach( function(isPulse, step) {
+                if( isPulse ) {
+                    addMessage(step*stream.stepSize, [NOTE_ON + channel, note+shift, velocity]);
+                    addMessage((step+2)*stream.stepSize, [NOTE_OFF + channel, note+shift, velocity]);
+                }
+            });
         });
-    });
+    }
+
+    return {
+        on: on 
+    };
 }
 
-function noteOn(dataChannel, note, velocity) {
-    instream = instreams[dataChannel];
-    if( instream ) {
-        processInstream(instream, note, velocity);
-    }
-}
+var emitterA = new Emitter({
+    0:[
+        { pattern: generateBjorklund(8, 5, true), stepSize: PPQN/2 },
+        { pattern: generateBjorklund(13,3), stepSize: PPQN/8 },
+        { pattern: generateBjorklund(7,5), stepSize: PPQN },
+    ]
+});
 
 var eventQueue = [];
 function addMessage(offset, message) {
