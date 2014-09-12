@@ -13,6 +13,6 @@ Earlier versions of this system suffered from feature creep. Endless small 'adju
 ### Previous Results
 A number of previous prototypes have been produced. They have all suffered code rot and are not easily revived. Outputs from the last two versions are provided below:
 
-- 'Feelers' a system composed of Cocoa backend with an AngularJS frontend. Developed in Chicago. Clumsy interface. Weird music.
-- 'Manandjazz' the first interactive system. Developed in Lilongwe. Does not use midi.
-- 'SeqSeq9' used Apple's Logic as the front end; but could use any sequencer. Developed in Brampton.
+- 'Feelers' Developed in Chicago. Experimentally interactive and very clumsy. Weird music. [Album](https://soundcloud.com/feelersoutput)
+- 'Manandjazz' the first playable system. Developed in Lilongwe. Uses webaudio without midi. [Album](https://github.com/abrie/seqseq9/blob/master/album/manandjazz-live_in_lilongwe.tgz?raw=true).
+- 'SeqSeq9' uses Apple's Logic as a front end; but could use any sequencer. Developed in Peel Region.
