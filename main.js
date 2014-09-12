@@ -52,8 +52,8 @@ function Emitter(patterns) {
         instream.forEach( function(stream, channel) {
             stream.pattern.forEach( function(isPulse, step) {
                 if( isPulse ) {
-                    messageQueue.addMessage(step*stream.stepSize, [NOTE_ON + channel, note+shift, velocity]);
-                    messageQueue.addMessage((step+2)*stream.stepSize, [NOTE_OFF + channel, note+shift, velocity]);
+                    messageQueue.enqueue(step*stream.stepSize, [NOTE_ON + channel, note+shift, velocity]);
+                    messageQueue.enqueue((step+2)*stream.stepSize, [NOTE_OFF + channel, note+shift, velocity]);
                 }
             });
         });
@@ -74,7 +74,7 @@ var emitterA = new Emitter({
 
 var MessageQueue = function() {
     var eventQueue = [];
-    function addMessage(offset, message) {
+    function enqueue(offset, message) {
         if( eventQueue.length <= offset ) {
             var newArray = [];
             newArray[ offset - eventQueue.length ] = [];
@@ -86,7 +86,7 @@ var MessageQueue = function() {
         eventQueue[offset].push(message);
     }
 
-    function readMessage( callback ) {
+    function dequeue( callback ) {
         var messages = eventQueue.shift();
         if( messages ) {
             messages.forEach( function(message) {
@@ -96,8 +96,8 @@ var MessageQueue = function() {
     }
 
     return {
-        addMessage: addMessage,
-        readMessage: readMessage
+        enqueue: enqueue,
+        dequeue: dequeue
     };
 };
 
@@ -109,7 +109,7 @@ function onPulse() {
     function sendMessage(message) {
         output.sendMessage(message);
     }
-    messageQueue.readMessage( sendMessage );
+    messageQueue.dequeue( sendMessage );
 }
 
 input.on('message', function(deltaTime, message) {
