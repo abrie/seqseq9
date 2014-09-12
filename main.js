@@ -53,7 +53,7 @@ function Emitter(patterns) {
                 var onMessage = [NOTE_ON + desc.channel, note+shift, velocity];
                 messageQueue.enqueue(step*desc.stepSize, onMessage );
                 var offMessage = [NOTE_OFF + desc.channel, note+shift, velocity];
-                messageQueue.enqueue((step+2)*desc.stepSize, offMessage );
+                messageQueue.enqueue((step+desc.stepsPerNote)*desc.stepSize, offMessage );
             }
         });
     }
@@ -72,10 +72,10 @@ function Emitter(patterns) {
 
 var emitterA = new Emitter({
     0:[
-        { channel: 0, pattern: generateBjorklund(8, 4 ), stepSize: PPQN/2 },
-        { channel: 0, pattern: generateBjorklund(7, 5, true), stepSize: PPQN/2 },
-        { channel: 1, pattern: generateBjorklund(13,3), stepSize: PPQN/6 },
-        { channel: 1, pattern: generateBjorklund(7,5), stepSize: PPQN },
+        { channel: 1, pattern: generateBjorklund(13,7), stepsPerNote: 1, stepSize: PPQN/4 },
+    ],
+    1:[
+        { channel: 2, pattern: generateBjorklund(4, 1, true ), stepsPerNote: 1, stepSize: PPQN/2 },
     ]
 });
 
