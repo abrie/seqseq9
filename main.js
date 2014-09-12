@@ -52,8 +52,8 @@ function Emitter(patterns) {
         instream.forEach( function(stream, channel) {
             stream.pattern.forEach( function(isPulse, step) {
                 if( isPulse ) {
-                    addMessage(step*stream.stepSize, [NOTE_ON + channel, note+shift, velocity]);
-                    addMessage((step+2)*stream.stepSize, [NOTE_OFF + channel, note+shift, velocity]);
+                    messageQueue.addMessage(step*stream.stepSize, [NOTE_ON + channel, note+shift, velocity]);
+                    messageQueue.addMessage((step+2)*stream.stepSize, [NOTE_OFF + channel, note+shift, velocity]);
                 }
             });
         });
@@ -72,32 +72,44 @@ var emitterA = new Emitter({
     ]
 });
 
-var eventQueue = [];
-function addMessage(offset, message) {
-    if( eventQueue.length <= offset ) {
-        var newArray = [];
-        newArray[ offset - eventQueue.length ] = [];
-        eventQueue = eventQueue.concat( newArray );
+var MessageQueue = function() {
+    var eventQueue = [];
+    function addMessage(offset, message) {
+        if( eventQueue.length <= offset ) {
+            var newArray = [];
+            newArray[ offset - eventQueue.length ] = [];
+            eventQueue = eventQueue.concat( newArray );
+        }
+        if( eventQueue[offset] === undefined ) {
+            eventQueue[offset] = [];
+        }
+        eventQueue[offset].push(message);
     }
-    if( eventQueue[offset] === undefined ) {
-        eventQueue[offset] = [];
-    }
-    eventQueue[offset].push(message);
-}
 
-function readMessage() {
-    var messages = eventQueue.shift();
-    if( messages ) {
-        messages.forEach( function(message) {
-            output.sendMessage(message);
-        });
+    function readMessage( callback ) {
+        var messages = eventQueue.shift();
+        if( messages ) {
+            messages.forEach( function(message) {
+                callback(message);
+            });
+        }
     }
-}
+
+    return {
+        addMessage: addMessage,
+        readMessage: readMessage
+    };
+};
+
 
 var pulses = 0;
 var position = {};
+var messageQueue = new MessageQueue();
 function onPulse() {
-    readMessage();
+    function sendMessage(message) {
+        output.sendMessage(message);
+    }
+    messageQueue.readMessage( sendMessage );
 }
 
 input.on('message', function(deltaTime, message) {
