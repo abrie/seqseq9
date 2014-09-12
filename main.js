@@ -14,6 +14,7 @@ input.ignoreTypes(true,false,true);
 
 NOTE_ON = 0x90;
 NOTE_OFF = 0x80;
+CC = 0xB0;
 SYSTEM = 0xF0;
 SPP = 0x02;
 CLOCK = 0x08;
@@ -33,6 +34,12 @@ function getLoStatus(message) {
 
 function onNoteOn(channel, note, velocity) {
     emitterA.on(channel, note, velocity);
+}
+
+function onCC(channel, controller, value) {
+    if( controller === 9 ) {
+        emitterA.setStepSize(channel, value);
+    }
 }
 
 function onNoteOff(channel, note, velocity) {
@@ -65,17 +72,27 @@ function Emitter(patterns) {
         }); 
     }
 
+    function setStepSize(channel, value) {
+        var stream = patterns[channel];
+        stream.forEach( function(stream) {
+            stream.stepSize = PPQN/value;
+        });
+        console.log("stepSize set:", channel, value);
+    }
+
+
     return {
-        on: on 
+        on: on,
+        setStepSize: setStepSize
     };
 }
 
 var emitterA = new Emitter({
     0:[
-        { channel: 1, pattern: generateBjorklund(13,7), stepsPerNote: 1, stepSize: PPQN/4 },
+        { channel: 0, pattern: generateBjorklund(5,3), stepsPerNote: 1, stepSize: PPQN/4 },
     ],
     1:[
-        { channel: 2, pattern: generateBjorklund(4, 1, true ), stepsPerNote: 1, stepSize: PPQN/2 },
+        { channel: 1, pattern: generateBjorklund(5,3,true), stepsPerNote: 1, stepSize: PPQN/4 },
     ]
 });
 
@@ -129,6 +146,12 @@ input.on('message', function(deltaTime, message) {
         break;
         case NOTE_OFF:
             onNoteOff(
+                getLoStatus(message),
+                message[1],
+                message[2]);
+        break;
+        case CC:
+            onCC(
                 getLoStatus(message),
                 message[1],
                 message[2]);
