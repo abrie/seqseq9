@@ -55,11 +55,13 @@ function Emitter(patterns) {
     var shifts = [0,7,3,12];
     function emit(desc, note, velocity) {
         desc.pattern.forEach( function(isPulse, step) {
-        var shift = shifts[rand(shifts.length)];
+            var shift = shifts[rand(shifts.length)];
+            var vshift = Math.min(127, velocity+(rand(15)-5));
+            vshift = Math.max( vshift, 0 );
             if( isPulse ) {
-                var onMessage = [NOTE_ON + desc.channel, note+shift, velocity];
+                var onMessage = [NOTE_ON + desc.channel, note+shift, vshift];
                 messageQueue.enqueue(step*desc.stepSize, onMessage );
-                var offMessage = [NOTE_OFF + desc.channel, note+shift, velocity];
+                var offMessage = [NOTE_OFF + desc.channel, note+shift, vshift];
                 messageQueue.enqueue((step+1)*desc.stepSize, offMessage );
             }
         });
