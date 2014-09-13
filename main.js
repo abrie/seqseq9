@@ -69,9 +69,11 @@ function Emitter(patterns) {
 
     function on(channel, note, velocity) {
         var streams = patterns[channel];
-        streams.forEach( function(stream) { 
-            emit(stream, note, velocity); 
-        }); 
+        if( streams ) {
+            streams.forEach( function(stream) { 
+                emit(stream, note, velocity); 
+            }); 
+        }
     }
 
     function setStepSize(channel, value) {
