@@ -52,7 +52,7 @@ function rand(v) {
 }
 
 function Emitter(patterns) {
-    var shifts = [0,3,7,1];
+    var shifts = [0,7,3,12];
     function emit(desc, note, velocity) {
         desc.pattern.forEach( function(isPulse, step) {
         var shift = shifts[rand(shifts.length)];
