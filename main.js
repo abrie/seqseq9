@@ -1,3 +1,4 @@
+var Queue = require('./queue.js');
 var midi = require('midi');
 var input = new midi.input();
 var output = new midi.output();
@@ -60,9 +61,9 @@ function Emitter(patterns) {
             vshift = Math.max( vshift, 0 );
             if( isPulse ) {
                 var onMessage = [NOTE_ON + desc.channel, note+shift, vshift];
-                messageQueue.enqueue(step*desc.stepSize, onMessage );
+                queue.enqueue(step*desc.stepSize, onMessage );
                 var offMessage = [NOTE_OFF + desc.channel, note+shift, vshift];
-                messageQueue.enqueue((step+1)*desc.stepSize, offMessage );
+                queue.enqueue((step+1)*desc.stepSize, offMessage );
             }
         });
     }
@@ -93,51 +94,21 @@ function Emitter(patterns) {
 
 var emitterA = new Emitter({
     0:[
-        { channel: 0, pattern: generateBjorklund(4,4), stepsPerNote: 3, stepSize: PPQN/4 },
+        { channel: 1, pattern: generateBjorklund(5,3), stepSize: PPQN/4 },
     ],
     1:[
-        { channel: 1, pattern: generateBjorklund(5,3,true), stepsPerNote: 1, stepSize: PPQN/4 },
+        { channel: 0, pattern: generateBjorklund(12,7), stepSize: PPQN/4 },
+        { channel: 2, pattern: generateBjorklund(24,13,true), stepSize: PPQN },
     ]
 });
 
-var MessageQueue = function() {
-    var eventQueue = [];
-    function enqueue(offset, message) {
-        if( eventQueue.length <= offset ) {
-            var newArray = [];
-            newArray[ offset - eventQueue.length ] = [];
-            eventQueue = eventQueue.concat( newArray );
-        }
-        if( eventQueue[offset] === undefined ) {
-            eventQueue[offset] = [];
-        }
-        eventQueue[offset].push(message);
-    }
-
-    function dequeue( callback ) {
-        var messages = eventQueue.shift();
-        if( messages ) {
-            messages.forEach( function(message) {
-                callback(message);
-            });
-        }
-    }
-
-    return {
-        enqueue: enqueue,
-        dequeue: dequeue
-    };
-};
-
-
 var pulses = 0;
-var position = {};
-var messageQueue = new MessageQueue();
+var queue = new Queue();
 function onPulse() {
     function sendMessage(message) {
         output.sendMessage(message);
     }
-    messageQueue.dequeue( sendMessage );
+    queue.dequeue().forEach( sendMessage );
 }
 
 input.on('message', function(deltaTime, message) {
