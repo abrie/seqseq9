@@ -1,37 +1,7 @@
 var Queue = require('./queue.js');
-var midi = require('midi');
-var input = new midi.input();
-var output = new midi.output();
-var INPUT = 0;
-var OUTPUT = 1;
+var midi = require('./midi.js');
 
-console.log("\n*synth IX* manandjazz");
-console.log("Input port:", input.getPortName(INPUT));
-console.log("Output port:", output.getPortName(OUTPUT));
-
-output.openPort(OUTPUT);
-input.openPort(INPUT);
-input.ignoreTypes(true,false,true);
-
-NOTE_ON = 0x90;
-NOTE_OFF = 0x80;
-CC = 0xB0;
-SYSTEM = 0xF0;
-SPP = 0x02;
-CLOCK = 0x08;
-START = 0x0A;
-CONTINUE = 0x0B;
-STOP = 0x0C;
-RESET = 0x0F;
 PPQN = 24;
-
-function getHiStatus(message) {
-    return message[0] & 0xF0;
-}
-
-function getLoStatus(message) {
-    return message[0] & 0x0F;
-}
 
 function onNoteOn(channel, note, velocity) {
     emitterA.on(channel, note, velocity);
@@ -105,61 +75,19 @@ var emitterA = new Emitter({
 var pulses = 0;
 var queue = new Queue();
 function onPulse() {
-    function sendMessage(message) {
-        output.sendMessage(message);
-    }
-    queue.dequeue().forEach( sendMessage );
+    queue.dequeue().forEach( midi.sendMessage );
 }
 
-input.on('message', function(deltaTime, message) {
-    switch( getHiStatus(message) ) {
-        case NOTE_ON:
-            onNoteOn(
-                getLoStatus(message),
-                message[1],
-                message[2]);
-        break;
-        case NOTE_OFF:
-            onNoteOff(
-                getLoStatus(message),
-                message[1],
-                message[2]);
-        break;
-        case CC:
-            onCC(
-                getLoStatus(message),
-                message[1],
-                message[2]);
-        break;
-        case SYSTEM:
-            switch( getLoStatus(message) ) {
-                case CLOCK:
-                    onPulse();
-                break; 
-                case START:
-                    console.log("<clock START>");
-                    pulses = 0;
-                break;
-                case STOP:
-                    console.log("<clock STOP>");
-                break;
-                case CONTINUE:
-                    console.log("<clock CONTINUE>");
-                break;
-                case SPP:
-                    console.log("<pointer>", message[1], message[2]);
-                break;
-                default:
-                    console.log("unknown system:", message);
-                break;
-            }
-        break;
-        default:
-            console.log("unknown status:", message);
-        break;
+midi.setMessageHandlers({
+    onNoteOn:onNoteOn,
+    onNoteOff:onNoteOff,
+    onCC:onCC,
+    onPulse:onPulse,
+    onStart: function() {},
+    onStop: function() {},
+    onContinue: function() {},
+    onSPP: function() {}});
 
-    }
-});
 
 function generateBjorklund( steps, pulses, pulseFirst ) {
     var divisor = steps - pulses;
