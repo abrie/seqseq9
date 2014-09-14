@@ -88,4 +88,17 @@ input.on('message', function(deltaTime, message) {
     }
 });
 
-module.exports = {setMessageHandlers:setMessageHandlers, sendMessage:sendMessage};
+function noteOn( channel, note, velocity ) {
+    return [NOTE_ON + channel, note, velocity];
+}
+
+function noteOff( channel, note, velocity ) {
+    return [NOTE_OFF + channel, note, velocity];
+}
+
+module.exports = {
+    setMessageHandlers:setMessageHandlers,
+    sendMessage:sendMessage,
+    noteOn: noteOn,
+    noteOff: noteOff,
+};

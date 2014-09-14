@@ -31,9 +31,9 @@ function Emitter(patterns) {
             var vshift = Math.min(127, velocity+(rand(15)-5));
             vshift = Math.max( vshift, 0 );
             if( isPulse ) {
-                var onMessage = [NOTE_ON + desc.channel, note+shift, vshift];
+                var onMessage = midi.noteOn(desc.channel, note+shift, vshift);
                 queue.enqueue(step*desc.stepSize, onMessage );
-                var offMessage = [NOTE_OFF + desc.channel, note+shift, vshift];
+                var offMessage = midi.noteOff(desc.channel, note+shift, vshift);
                 queue.enqueue((step+1)*desc.stepSize, offMessage );
             }
         });
