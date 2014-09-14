@@ -24,12 +24,15 @@ function rand(v) {
 }
 
 function Emitter(patterns) {
-    var shifts = [0,7,3,12];
+    var shifts = [0,7,3, 12];
     function emit(desc, note, velocity) {
+        var shift = shifts[rand(shifts.length)];
+        var vshift = Math.min(127, velocity+(rand(75)-37));
+        vshift = Math.max( vshift, 0 );
         desc.pattern.forEach( function(isPulse, step) {
-            var shift = shifts[rand(shifts.length)];
-            var vshift = Math.min(127, velocity+(rand(15)-5));
-            vshift = Math.max( vshift, 0 );
+            if( desc.shiftAlways ) {
+                shift = shifts[rand(shifts.length)];
+            }
             if( isPulse ) {
                 var onMessage = midi.noteOn(desc.channel, note+shift, vshift);
                 queue.enqueue(step*desc.stepSize, onMessage );
@@ -65,11 +68,11 @@ function Emitter(patterns) {
 
 var emitterA = new Emitter({
     0:[
-        { channel: 1, pattern: bjorklund(5,3), stepSize: PPQN/4 },
+        { channel: 1, pattern: bjorklund(9,5), stepSize: PPQN/4, shiftAlways:true },
     ],
     1:[
-        { channel: 0, pattern: bjorklund(12,7), stepSize: PPQN/4 },
-        { channel: 2, pattern: bjorklund(24,13,true), stepSize: PPQN },
+        { channel: 0, pattern: bjorklund(12,7,true), stepSize: PPQN/2 },
+        //{ channel: 2, pattern: bjorklund(24,13,true), stepSize: PPQN },
     ]
 });
 
