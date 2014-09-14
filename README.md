@@ -2,7 +2,7 @@ SeqSeq9
 =======
 
 ### The Sound
-[Here](http://youtu.be/YKb0v2ULtwU) is a collection of recent performances. All sounds are Logic X instruments and generally use a factory patch without post production. The sequences are a synthesis of human and machine.
+[Here](http://youtu.be/YKb0v2ULtwU) is a collection of recent performances. All sounds are Logic X instruments and generally use a factory patch without post production. The sequences are a synthesis of human and machine. The drum patterns are always man made.
 
 ### History
 This is the ninth generation of a sequencer-sequencer. Described as an experiment in computer aided jazz. It was supposed to yield fame and fortune. But all it gave were tones.
