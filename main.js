@@ -69,11 +69,26 @@ function Emitter(patterns) {
 
 var emitterA = new Emitter({
     0:[
-        { channel: 1, patternIndex:0, pattern: [bjorklund(12,5),bjorklund(8,3)], stepSize: PPQN/4, shiftAlways:true },
+        {   channel: 1,
+            patternIndex: 0,
+            pattern: [bjorklund(13,7), bjorklund(8,6)],
+            stepSize: PPQN/4,
+            shiftAlways: true,
+        },
     ],
     1:[
-        { channel: 0, patternIndex:0, pattern: [bjorklund(24,7,true)], stepSize: PPQN/4 },
-        //{ channel: 2, pattern: bjorklund(24,13,true), stepSize: PPQN },
+        {   channel: 0,
+            patternIndex: 0,
+            pattern: [bjorklund(24,7,true)],
+            stepSize: PPQN/4, 
+            shiftAlways: false,
+        },
+        {   channel: 2,
+            patternIndex: 0,
+            pattern: [bjorklund(24,7,true)],
+            stepSize: PPQN/4, 
+            shiftAlways: false,
+        },
     ]
 });
 
