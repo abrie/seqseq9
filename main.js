@@ -27,7 +27,7 @@ function Emitter(patterns) {
     var shifts = [0,7,3, 12];
     function emit(desc, note, velocity) {
         var shift = shifts[rand(shifts.length)];
-        var vshift = Math.min(127, velocity+(rand(75)-37));
+        var vshift = Math.min(127, velocity+(rand(25)-12));
         vshift = Math.max( vshift, 0 );
         var pattern = desc.pattern[desc.patternIndex++%desc.pattern.length];
         pattern.forEach( function(isPulse, step) {
