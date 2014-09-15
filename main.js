@@ -29,7 +29,8 @@ function Emitter(patterns) {
         var shift = shifts[rand(shifts.length)];
         var vshift = Math.min(127, velocity+(rand(75)-37));
         vshift = Math.max( vshift, 0 );
-        desc.pattern.forEach( function(isPulse, step) {
+        var pattern = desc.pattern[desc.patternIndex++%desc.pattern.length];
+        pattern.forEach( function(isPulse, step) {
             if( desc.shiftAlways ) {
                 shift = shifts[rand(shifts.length)];
             }
@@ -68,10 +69,10 @@ function Emitter(patterns) {
 
 var emitterA = new Emitter({
     0:[
-        { channel: 1, pattern: bjorklund(9,5), stepSize: PPQN/4, shiftAlways:true },
+        { channel: 1, patternIndex:0, pattern: [bjorklund(12,5),bjorklund(8,3)], stepSize: PPQN/4, shiftAlways:true },
     ],
     1:[
-        { channel: 0, pattern: bjorklund(12,7,true), stepSize: PPQN/2 },
+        { channel: 0, patternIndex:0, pattern: [bjorklund(24,7,true)], stepSize: PPQN/4 },
         //{ channel: 2, pattern: bjorklund(24,13,true), stepSize: PPQN },
     ]
 });
