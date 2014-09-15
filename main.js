@@ -30,15 +30,16 @@ function Emitter(patterns) {
         var vshift = Math.min(127, velocity+(rand(25)-12));
         vshift = Math.max( vshift, 0 );
         var pattern = desc.pattern[desc.patternIndex++%desc.pattern.length];
+        var os = rand(3); // random offset to start
         pattern.forEach( function(isPulse, step) {
             if( desc.shiftAlways ) {
                 shift = shifts[rand(shifts.length)];
             }
             if( isPulse ) {
                 var onMessage = midi.noteOn(desc.channel, note+shift, vshift);
-                queue.enqueue(step*desc.stepSize, onMessage );
+                queue.enqueue((step+os)*desc.stepSize, onMessage );
                 var offMessage = midi.noteOff(desc.channel, note+shift, vshift);
-                queue.enqueue((step+1)*desc.stepSize, offMessage );
+                queue.enqueue((step+os+1)*desc.stepSize, offMessage );
             }
         });
     }
