@@ -35,14 +35,14 @@ function Emitter(patterns) {
         var os = randNumber(3); // random offset to start
         var velFade = Math.ceil( velocity / pattern.length );
         pattern.forEach( function(isPulse, step) {
-            var vshift = step*velFade;
+            var v = velocity - step*velFade;
             if( desc.shiftAlways ) {
                 shift = randIndex(shifts);
             }
             if( isPulse ) {
-                var onMessage = midi.noteOn(desc.channel, note+shift, velocity-vshift);
+                var onMessage = midi.noteOn(desc.channel, note+shift, v);
                 queue.enqueue((step+os)*desc.stepSize, onMessage );
-                var offMessage = midi.noteOff(desc.channel, note+shift, velocity-vshift);
+                var offMessage = midi.noteOff(desc.channel, note+shift, v);
                 queue.enqueue((step+os+1)*desc.stepSize, offMessage );
             }
         });
@@ -76,25 +76,11 @@ var emitterA = new Emitter({
     0:[
         {   channel: 0,
             patternIndex: 0,
-            pattern: [bjorklund(24,7,true)],
+            pattern: [bjorklund(4,3)],
             stepSize: PPQN/4, 
             shiftAlways: false,
         },
     ],
-    1:[
-        {   channel: 1,
-            patternIndex: 0,
-            pattern: [bjorklund(13,7), bjorklund(8,6)],
-            stepSize: PPQN/4,
-            shiftAlways: true,
-        },
-        {   channel: 2,
-            patternIndex: 0,
-            pattern: [bjorklund(24,7,true)],
-            stepSize: PPQN/4, 
-            shiftAlways: false,
-        },
-    ]
 });
 
 var pulses = 0;
