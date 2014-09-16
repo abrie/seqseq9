@@ -19,21 +19,25 @@ function onNoteOff(channel, note, velocity) {
     }
 }
 
-function rand(v) {
+function randNumber(v) {
     return Math.floor( Math.random()*v );
+}
+
+function randIndex(arr) {
+    return arr[randNumber(arr.length)];
 }
 
 function Emitter(patterns) {
     var shifts = [0,7,3, 12];
     function emit(desc, note, velocity) {
-        var shift = shifts[rand(shifts.length)];
-        var vshift = Math.min(127, velocity+(rand(25)-12));
+        var shift = randIndex(shifts);
+        var vshift = Math.min(127, velocity+(randNumber(25)-12));
         vshift = Math.max( vshift, 0 );
         var pattern = desc.pattern[desc.patternIndex++%desc.pattern.length];
-        var os = rand(3); // random offset to start
+        var os = randNumber(3); // random offset to start
         pattern.forEach( function(isPulse, step) {
             if( desc.shiftAlways ) {
-                shift = shifts[rand(shifts.length)];
+                shift = randIndex(shifts);
             }
             if( isPulse ) {
                 var onMessage = midi.noteOn(desc.channel, note+shift, vshift);
