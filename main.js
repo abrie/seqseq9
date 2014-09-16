@@ -28,21 +28,21 @@ function randIndex(arr) {
 }
 
 function Emitter(patterns) {
-    var shifts = [0,7,3, 12];
+    var shifts = [0,7,-4,12];
     function emit(desc, note, velocity) {
         var shift = randIndex(shifts);
-        var vshift = Math.min(127, velocity+(randNumber(25)-12));
-        vshift = Math.max( vshift, 0 );
         var pattern = desc.pattern[desc.patternIndex++%desc.pattern.length];
         var os = randNumber(3); // random offset to start
+        var velFade = Math.ceil( velocity / pattern.length );
         pattern.forEach( function(isPulse, step) {
+            var vshift = step*velFade;
             if( desc.shiftAlways ) {
                 shift = randIndex(shifts);
             }
             if( isPulse ) {
-                var onMessage = midi.noteOn(desc.channel, note+shift, vshift);
+                var onMessage = midi.noteOn(desc.channel, note+shift, velocity-vshift);
                 queue.enqueue((step+os)*desc.stepSize, onMessage );
-                var offMessage = midi.noteOff(desc.channel, note+shift, vshift);
+                var offMessage = midi.noteOff(desc.channel, note+shift, velocity-vshift);
                 queue.enqueue((step+os+1)*desc.stepSize, offMessage );
             }
         });
