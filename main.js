@@ -1,8 +1,9 @@
+"use strict";
 var Queue = require('./queue.js');
 var midi = require('./midi.js');
 var bjorklund = require('./bjorklund.js');
 
-PPQN = 24;
+var PPQN = 24;
 
 function onNoteOn(channel, note, velocity) {
     emitterA.on(channel, note, velocity);

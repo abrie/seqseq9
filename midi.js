@@ -1,3 +1,5 @@
+"use strict";
+
 var midi = require('midi');
 var input = new midi.input();
 var output = new midi.output();

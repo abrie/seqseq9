@@ -1,3 +1,5 @@
+"use strict";
+
 function generate( steps, pulses, pulseFirst ) {
     var divisor = steps - pulses;
     var level = 0;
