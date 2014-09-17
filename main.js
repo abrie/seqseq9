@@ -19,12 +19,12 @@ function onNoteOff(channel, note, velocity) {
     }
 }
 
-function randNumber(v) {
+function randInt(v) {
     return Math.floor( Math.random()*v );
 }
 
 function randIndex(arr) {
-    return arr[randNumber(arr.length)];
+    return arr[randInt(arr.length)];
 }
 
 function Emitter(patterns) {
@@ -32,7 +32,7 @@ function Emitter(patterns) {
     function emit(desc, note, velocity) {
         var shift = randIndex(shifts);
         var pattern = desc.pattern[desc.patternIndex++%desc.pattern.length];
-        var os = randNumber(3); // random offset to start
+        var os = randInt(3); // random offset to start
         var velFade = Math.ceil( velocity / pattern.length );
         pattern.forEach( function(isPulse, step) {
             var v = velocity - step*velFade;
