@@ -1,6 +1,7 @@
 "use strict";
 var Queue = require('./queue.js');
 var midi = require('./midi.js');
+var util = require('./util.js');
 var bjorklund = require('./bjorklund.js');
 
 var PPQN = 24;
@@ -20,25 +21,18 @@ function onNoteOff(channel, note, velocity) {
     }
 }
 
-function randInt(v) {
-    return Math.floor( Math.random()*v );
-}
-
-function randIndex(arr) {
-    return arr[randInt(arr.length)];
-}
 
 function Emitter(patterns) {
     var shifts = [0,7,-4,12];
     function emit(desc, note, velocity) {
-        var shift = randIndex(shifts);
+        var shift = util.randIndex(shifts);
         var pattern = desc.pattern[desc.patternIndex++%desc.pattern.length];
-        var os = randInt(3); // random offset to start
+        var os = util.randInt(3); // random offset to start
         var velFade = Math.ceil( velocity / pattern.length );
         pattern.forEach( function(isPulse, step) {
             var v = velocity - step*velFade;
             if( desc.shiftAlways ) {
-                shift = randIndex(shifts);
+                shift = util.randIndex(shifts);
             }
             if( isPulse ) {
                 var onMessage = midi.noteOn(desc.channel, note+shift, v);
