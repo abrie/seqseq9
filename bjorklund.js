@@ -1,3 +1,4 @@
+/*jslint node: true */
 "use strict";
 
 function generate( steps, pulses, pulseFirst ) {

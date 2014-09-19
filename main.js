@@ -1,4 +1,6 @@
+/*jslint node: true */
 "use strict";
+
 var Queue = require('./queue.js');
 var midi = require('./midi.js');
 var util = require('./util.js');
@@ -20,7 +22,6 @@ function onNoteOff(channel, note, velocity) {
     if( channel === 0 ) {
     }
 }
-
 
 function Emitter(patterns) {
     var shifts = [0,7,-4,12];
