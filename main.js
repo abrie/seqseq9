@@ -28,7 +28,7 @@ function Emitter(patterns) {
     function emit(desc, note, velocity) {
         var shift = util.randIndex(shifts);
         var pattern = desc.pattern[desc.patternIndex++%desc.pattern.length];
-        var os = util.randInt(3); // random offset to start
+        var os = util.randInt(0); // random offset to start
         var velFade = Math.ceil( velocity / pattern.length );
         pattern.forEach( function(isPulse, step) {
             var v = velocity - step*velFade;
