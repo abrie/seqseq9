@@ -36,10 +36,11 @@ function Emitter(patterns) {
                 shift = util.randIndex(shifts);
             }
             if( isPulse ) {
+                var stepSize = desc.stepSize();
                 var onMessage = midi.noteOn(desc.channel, note+shift, v);
-                queue.enqueue((step+os)*desc.stepSize, onMessage );
+                queue.enqueue((step+os)*stepSize, onMessage );
                 var offMessage = midi.noteOff(desc.channel, note+shift, v);
-                queue.enqueue((step+os+1)*desc.stepSize, offMessage );
+                queue.enqueue((step+os+1)*stepSize, offMessage );
             }
         });
     }
@@ -73,7 +74,7 @@ var emitterA = new Emitter({
         {   channel: 0,
             patternIndex: 0,
             pattern: [bjorklund(4,3)],
-            stepSize: PPQN/4, 
+            stepSize: function() { return PPQN/4*util.randInt(2); }, 
             shiftAlways: false,
         },
     ],
