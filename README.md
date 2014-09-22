@@ -2,7 +2,7 @@ SeqSeq9
 =======
 
 ### The Sound
-[Here](https://www.youtube.com/watch?v=YKb0v2ULtwU&list=PLqyn9JJjwfUN4gW2cIPBj_nkkEg7kbyLx) are logs of various performances. They reflect various algorithmic experiments and were selected by their ability to induce [frission](http://en.wikipedia.org/wiki/Cold_chill) in the author. All sounds are made by Logic X instruments and generally use a factory patch. The sequences are a synthesis of human and machine, but the drum patterns are man made.
+[Here](https://www.youtube.com/watch?v=YKb0v2ULtwU&list=PLqyn9JJjwfUN4gW2cIPBj_nkkEg7kbyLx) are logs of various performances. They reflect experimental iterations and were selected by their ability to induce [frission](http://en.wikipedia.org/wiki/Cold_chill) in the author. All sounds are made by Logic X instruments and generally use a factory patch. The sequences are a synthesis of human and machine, but the drum patterns are man made.
 
 ### The Code
 The code, as presented, is a framework for experimentation and may not be very useful to third parties. No instructions are provided because it is presently too dynamic. It is a sandbox for the discovery of algorithmic approaches amendable to an interactive application. This repository is thus a log for future reference.
